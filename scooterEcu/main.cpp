@@ -3,13 +3,14 @@
 #include <chrono>
 #include <thread>
 #include <termios.h>
+#include "engineProtection.h"
 
 
 struct scooterEcu {
     unsigned int monitorA;
     unsigned int monitorB;
     unsigned int timeStamp = 0;
-    bool serviceMode = false;
+
     bool monitorError = false;
 };
 
@@ -20,6 +21,8 @@ private:
 public:
     unsigned int ignition = 0;
     unsigned int avgTemp = 0;
+    bool fansOn = false;
+    bool serviceMode = false;
 
     scooterEcu ecu;
     std::chrono::steady_clock::time_point startTime;
@@ -69,7 +72,7 @@ public:
         } else {tempDiff = tempA - tempB;}
         if (tempDiff >= 15) {
             std::cout << "[ECU] Czujniki nie działają poprawnie, udaj sie do serwisu w celu naprawienia usterki." << std::endl;
-            ecu.serviceMode = true;
+            serviceMode = true;
             setIgnition(0);
             return;
         }
@@ -82,13 +85,18 @@ public:
         if (avgTemp >= 110) {
             std::cout << "[ECU] Temperatura osiągneła krytyczny poziom: " << avgTemp << " °C zapłon zostaje wyłączony." << std::endl;
             setIgnition(0);
-            ecu.serviceMode = true;
+            serviceMode = true;
         }
     }
 
     void checkFans() {
         if (avgTemp > 90 && avgTemp < 109) {
             std::cout <<"[ECU] Włączenie wiatraków z powodu zbyt wysokiej temp. " << std::endl;
+            fansOn = true;
+        }
+        if (fansOn == true && avgTemp < 90) {
+            std::cout <<"[ECU] Wyłączenie wiatraków z powodu stabilizacji temp. " << std::endl;
+            fansOn = false;
         }
     }
 
@@ -99,19 +107,23 @@ public:
 
 int main () {
     monitor ecuMonitor;
-
+    engineProtection protection;
+    int tempUserA, tempUserB;
     // Testowe wywołanie
+
     ecuMonitor.setIgnition(1);
     ecuMonitor.engineTimeStart();
     while (ecuMonitor.ignition == 1) {
-        ecuMonitor.tempSensor(101, 95);
+        std::cout << "Podaj testowe temp: " << std::endl;
+        std::cin >> tempUserA >> tempUserB;
+        ecuMonitor.tempSensor(tempUserA, tempUserB);
+        if (ecuMonitor.serviceMode == true) {
+            return 0;
+        } else {
+        protection.maxRPMforState(ecuMonitor.avgTemp);
         ecuMonitor.criticalTempSensor();
         ecuMonitor.checkFans();
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-        ecuMonitor.tempSensor(50,48);
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-        ecuMonitor.tempSensor(75,20);
+        }
     }
     ecuMonitor.engineTimeEnd();
-
 }
