@@ -14,6 +14,7 @@ private:
     float tempThresholdWarning = 110;
 public:
     engineProtection() = default;
+    int maxRPM = 0;
 
     engineState evaluateState(float currentTemp) const {
         if (currentTemp < tempThresholdCold) return engineState::cold;
@@ -32,10 +33,10 @@ public:
         return 0;
     }
 
-    void maxRPMforState (int testTemp) {
+    unsigned int maxRPMforState (int testTemp) {
             engineState currentState = evaluateState(testTemp);
-            int maxRPM = getMaxAllowedRPM(currentState);
-            std::cout << "Temp: " << testTemp << " °C | Status: ";
+            maxRPM = getMaxAllowedRPM(currentState);
+            std::cout << "Status: ";
 
             switch (currentState) {
                 case engineState::cold: std::cout << "[COLD] Max "; break;
@@ -44,5 +45,6 @@ public:
                 case engineState::critical: std::cout << "[CRITICAL] Max "; break;
             }
             std::cout << maxRPM << " RPM" << std::endl;
+        return maxRPM;
         }
 };

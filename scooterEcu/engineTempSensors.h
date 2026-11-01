@@ -26,18 +26,18 @@ public:
     }
 
      void criticalTempSensor() {
-        if (avgTemp >= 110) {
+        if (avgTemp >= 120) {
             std::cout << "[ECU] Temperatura osiągneła krytyczny poziom: " << avgTemp << " °C zapłon zostaje wyłączony." << std::endl;
             serviceMode = true;
         }
     }
 
     void checkFans() {
-        if (avgTemp > 90 && avgTemp < 109) {
+        if (avgTemp > 95 && avgTemp < 119) {
             std::cout <<"[ECU] Włączenie wiatraków z powodu zbyt wysokiej temp. " << std::endl;
             fansOn = true;
         }
-        if (fansOn == true && avgTemp < 90) {
+        if (fansOn == true && avgTemp < 85) {
             std::cout <<"[ECU] Wyłączenie wiatraków z powodu stabilizacji temp. " << std::endl;
             fansOn = false;
         }

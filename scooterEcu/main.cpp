@@ -5,6 +5,7 @@
 #include <termios.h>
 #include "engineProtection.h"
 #include "engineTempSensors.h"
+#include "throttlePositionSensor.h"
 
 
 
@@ -63,28 +64,41 @@ int main () {
     monitor ecuMonitor;
     engineProtection protection;
     engineTemp tempSensorClass;
+    tps throttlePS;
 
-    int tempUserA, tempUserB;
+    int tempUserA, tempUserB, tps;
 
+    // Odpalenie zapłonu
     ecuMonitor.setIgnition(1);
+    // Start liczenia czasu
     ecuMonitor.engineTimeStart();
     while (ecuMonitor.ignition == 1) {
-        std::cout << "Podaj testowe temp: " << std::endl;
+        std::cout << "Podaj temp czujników: " << std::endl;
         std::cin >> tempUserA >> tempUserB;
+        std::cout << "Podaj pozycje manetki w %: " << std::endl;
+        std::cin >> tps;
 
+        // Średnia temp
         tempSensorClass.tempSensor(tempUserA, tempUserB);
+        // Awaryjne wyłączenie silnika
         if (tempSensorClass.serviceMode == 1) {
             ecuMonitor.setIgnition(0);
             break;
         }
+        // Status silnika i maksymalne obroty
         protection.maxRPMforState(tempSensorClass.avgTemp);
-
+        // Aktualne obroty liczone według procentu przekręcenia manetki
+        throttlePS.rpmsToThrottle(tps, protection.maxRPM);
+        // Wykrywanie krytycznej temperatury
         tempSensorClass.criticalTempSensor();
+        // Awaryjne wyłączenie silnika
         if (tempSensorClass.serviceMode == 1) {
             ecuMonitor.setIgnition(0);
             break;
         }
+        // Włączenie lub wyłączenie wiatraków
         tempSensorClass.checkFans();
         }
+    // Koniec liczenia czasu
     ecuMonitor.engineTimeEnd();
 }
