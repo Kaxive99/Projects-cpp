@@ -24,9 +24,9 @@ public:
 
     int getMaxAllowedRPM(engineState state) {
         switch (state) {
-            case engineState::cold: return 4000;
-            case engineState::optimal: return 8500;
-            case engineState::warning: return 11500;
+            case engineState::cold: return 3500;
+            case engineState::optimal: return 11000;
+            case engineState::warning: return 8500;
             case engineState::critical: return 0;
         }
         return 0;
