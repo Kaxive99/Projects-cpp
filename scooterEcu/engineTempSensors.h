@@ -1,5 +1,5 @@
 #pragma once
-
+#include "engineProtection.h"
 
 class engineTemp {
 private:
@@ -8,6 +8,7 @@ public:
     unsigned int avgTemp;
     bool fansOn = false;
     bool serviceMode = false;
+    engineProtection engine_protection;
 
     unsigned int tempSensor(unsigned int tempA, unsigned int tempB) {
         uint8_t tempDiff;
@@ -25,10 +26,11 @@ public:
 
     }
 
-     void criticalTempSensor() {
+     bool criticalTempSensor() {
         if (avgTemp >= 120) {
-            std::cout << "[ECU] Temperatura osiągneła krytyczny poziom: " << avgTemp << " °C zapłon zostaje wyłączony." << std::endl;
-            serviceMode = true;
+            std::cout << "[ECU] Temperatura osiągneła krytyczny poziom: " << avgTemp << " °C." << std::endl;
+            engine_protection.limpHomeMode(2000);
+            return true;
         }
     }
 

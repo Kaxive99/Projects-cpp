@@ -80,22 +80,18 @@ int main () {
 
         // Średnia temp
         tempSensorClass.tempSensor(tempUserA, tempUserB);
-        // Awaryjne wyłączenie silnika
-        if (tempSensorClass.serviceMode == 1) {
-            ecuMonitor.setIgnition(0);
+
+        // Wykrywanie krytycznej temperatury
+        if (tempSensorClass.criticalTempSensor() == true) {
             break;
         }
+
         // Status silnika i maksymalne obroty
         protection.maxRPMforState(tempSensorClass.avgTemp);
+
         // Aktualne obroty liczone według procentu przekręcenia manetki
         throttlePS.rpmsToThrottle(tps, protection.maxRPM);
-        // Wykrywanie krytycznej temperatury
-        tempSensorClass.criticalTempSensor();
-        // Awaryjne wyłączenie silnika
-        if (tempSensorClass.serviceMode == 1) {
-            ecuMonitor.setIgnition(0);
-            break;
-        }
+
         // Włączenie lub wyłączenie wiatraków
         tempSensorClass.checkFans();
         }

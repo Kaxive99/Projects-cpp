@@ -1,4 +1,5 @@
 #pragma once
+#include "throttlePositionSensor.h"
 
 enum class engineState {
     cold,
@@ -10,11 +11,12 @@ enum class engineState {
 class engineProtection {
 private:
     float tempThresholdCold = 50;
-    float tempThresholdOptimal = 90;
-    float tempThresholdWarning = 110;
+    float tempThresholdOptimal = 110;
+    float tempThresholdWarning = 150;
 public:
     engineProtection() = default;
     int maxRPM = 0;
+    tps tpS;
 
     engineState evaluateState(float currentTemp) const {
         if (currentTemp < tempThresholdCold) return engineState::cold;
@@ -34,17 +36,22 @@ public:
     }
 
     unsigned int maxRPMforState (int testTemp) {
-            engineState currentState = evaluateState(testTemp);
-            maxRPM = getMaxAllowedRPM(currentState);
-            std::cout << "Status: ";
+        engineState currentState = evaluateState(testTemp);
+        maxRPM = getMaxAllowedRPM(currentState);
+        std::cout << "Status: ";
 
-            switch (currentState) {
-                case engineState::cold: std::cout << "[COLD] Max "; break;
-                case engineState::optimal: std::cout << "[OK] Max "; break;
-                case engineState::warning: std::cout << "[WARNING] Max "; break;
-                case engineState::critical: std::cout << "[CRITICAL] Max "; break;
-            }
-            std::cout << maxRPM << " RPM" << std::endl;
-        return maxRPM;
+        switch (currentState) {
+            case engineState::cold: std::cout << "[COLD] Max "; break;
+            case engineState::optimal: std::cout << "[OK] Max "; break;
+            case engineState::warning: std::cout << "[WARNING] Max "; break;
+            case engineState::critical: std::cout << "[CRITICAL] Max "; break;
         }
+        std::cout << maxRPM << " RPM" << std::endl;
+        return maxRPM;
+    }
+
+     void limpHomeMode(int maxRpmLimpMode){
+            std::cout << "[ECU] Zastosowano limp home mode, maksymalna prędkość jest ograniczona." << std::endl;
+            // tpS.rpmsToThrottle(15, maxRpmLimpMode);
+    }
 };
