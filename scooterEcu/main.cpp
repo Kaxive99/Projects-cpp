@@ -12,7 +12,7 @@
 
 class monitor {
 private:
-    std::string ecuKey = "Eryczek123";
+    std::string ecuKey = "23123AS233223";
 
 public:
     unsigned int ignition = 0;
@@ -72,6 +72,8 @@ int main () {
     ecuMonitor.setIgnition(1);
     // Start liczenia czasu
     ecuMonitor.engineTimeStart();
+
+
     while (ecuMonitor.ignition == 1) {
         std::cout << "Podaj temp czujników: " << std::endl;
         std::cin >> tempUserA >> tempUserB;
@@ -80,6 +82,11 @@ int main () {
 
         // Średnia temp
         tempSensorClass.tempSensor(tempUserA, tempUserB);
+
+        if (tempSensorClass.serviceMode == true) {
+        std::cout << "Tryb serwisowy jest włączony, skontaktuj się z ASO." << std::endl;
+            break;
+        }
 
         // Wykrywanie krytycznej temperatury
         if (tempSensorClass.criticalTempSensor() == true) {

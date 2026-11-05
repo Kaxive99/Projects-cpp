@@ -7,7 +7,7 @@ private:
 public:
     unsigned int avgTemp;
     bool fansOn = false;
-    bool serviceMode = false;
+    bool serviceMode;
     engineProtection engine_protection;
 
     unsigned int tempSensor(unsigned int tempA, unsigned int tempB) {
@@ -16,9 +16,8 @@ public:
             tempDiff = tempB - tempA;
         } else {tempDiff = tempA - tempB;}
         if (tempDiff >= 15) {
-            std::cout << "[ECU] Czujniki nie działają poprawnie, udaj sie do serwisu w celu naprawienia usterki." << std::endl;
-            serviceMode = true;
-            return 0;
+            std::cout << "[ECU] Czujniki nie działają poprawnie." << std::endl;
+            return serviceMode = true;
         }
         avgTemp = (tempA + tempB) / 2;
         std::cout << "Średnia temperatura wynosi: " << avgTemp << " °C" << std::endl;
@@ -27,15 +26,16 @@ public:
     }
 
      bool criticalTempSensor() {
-        if (avgTemp >= 120) {
+        if (avgTemp >= 125) {
             std::cout << "[ECU] Temperatura osiągneła krytyczny poziom: " << avgTemp << " °C." << std::endl;
             engine_protection.limpHomeMode(2000);
             return true;
         }
+        return false;
     }
 
     void checkFans() {
-        if (avgTemp > 95 && avgTemp < 119) {
+        if (avgTemp > 95) {
             std::cout <<"[ECU] Włączenie wiatraków z powodu zbyt wysokiej temp. " << std::endl;
             fansOn = true;
         }
