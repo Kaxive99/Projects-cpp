@@ -4,4 +4,5 @@ project(esp32ServoRadar)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(esp32ServoRadar main.cpp
-        Blinker.h)
+        Blinker.h
+        radarServo.h)
