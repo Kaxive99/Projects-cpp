@@ -30,9 +30,10 @@ int main() {
     std::cout << tempS.isOverHeated()<< "\n";
 
     std::cout << stateName(RadarState::Tracking) << "\n";
-
-
-
-
-
+    RadarState state = RadarState::Scanning;
+    float distances[] = {100, 70, 45, 30, 18, 22, 30, 55, 65, 100};
+    for (float distance: distances) {
+        state = nextState(state, distance);
+        std::cout << "Dystans: " << distance << " --> " << stateName(state) << std::endl;
+    }
 }
