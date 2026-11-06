@@ -6,4 +6,5 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(esp32ServoRadar main.cpp
         Blinker.h
         RadarServo.h
-        TempSensor.h)
+        TempSensor.h
+        RadarState.h)

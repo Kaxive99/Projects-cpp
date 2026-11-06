@@ -2,6 +2,7 @@
 #include "Blinker.h"
 #include "RadarServo.h"
 #include "TempSensor.h"
+#include "RadarState.h"
 
 int main() {
 
@@ -26,7 +27,12 @@ int main() {
 
     tempS.setReading(120);
     std::cout << tempS.getReading()<< "\n";
-    std::cout << tempS.isOverHeated();
+    std::cout << tempS.isOverHeated()<< "\n";
+
+    std::cout << stateName(RadarState::Tracking) << "\n";
+
+
+
 
 
 }
