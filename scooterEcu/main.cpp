@@ -63,7 +63,7 @@ int main () {
 
     monitor ecuMonitor;
     engineProtection protection;
-    engineTemp tempSensorClass;
+    engineTemp tempSensorClass(protection);
     tps throttlePS;
 
     int tempUserA, tempUserB, tps;

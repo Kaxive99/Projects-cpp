@@ -2,13 +2,13 @@
 #include "engineProtection.h"
 
 class engineTemp {
-private:
 
 public:
     unsigned int avgTemp;
     bool fansOn = false;
     bool serviceMode;
-    engineProtection engine_protection;
+    engineProtection& engine_protection;
+    explicit engineTemp(engineProtection& p) : engine_protection(p) {}
 
     unsigned int tempSensor(unsigned int tempA, unsigned int tempB) {
         uint8_t tempDiff;
