@@ -1,7 +1,11 @@
 #pragma once
 #include <cstdint>
+#include <iostream>
+#include <cstdlib>
 
 enum class flightTrjacetory {Climb, Cruise, Descent  };
+uint32_t safeDistance = 100;
+
 
 inline const char* trajectoryName(flightTrjacetory state) {
     switch (state) {
@@ -12,4 +16,13 @@ inline const char* trajectoryName(flightTrjacetory state) {
     return "Unknown";
 }
 
-// Dostaje info o obiekcie na jakiej jest wysokosci jesli wysokosc koliduje o 35cm wtedy albo robi climb albo descent jesli obiekt jest na cruise dron leci do gory jesli jest na climb to leci na descent etc..
+
+inline bool isCollisionRisk(int ownAltitude, int intruderAltitude) { return  ((std::abs(ownAltitude - intruderAltitude)) < safeDistance); }
+
+inline flightTrjacetory updateTrajectory( flightTrjacetory current, int32_t ownAltitudeCm, int32_t intruderAltitudeCm) {
+    if (!isCollisionRisk(ownAltitudeCm, intruderAltitudeCm)) {
+        return current;
+    } else if ( ownAltitudeCm > intruderAltitudeCm) {
+        return flightTrjacetory::Climb;
+    } return flightTrjacetory::Descent; // ownAltitude < intruderAltitude && ownAltitude == intruderAltitude
+}

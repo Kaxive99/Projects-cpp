@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "BatteryState.h"
+#include "CollisionRadar.h"
 
 int main() {
 
@@ -12,4 +13,12 @@ int main() {
     std::cout << "Poziom bateri: " << batteryLevel(state) << " Napięcie: " << voltage <<std::endl;
     }
 
+    isCollisionRisk(320,280);
+
+    int32_t intruderAltitudes[] = {500, 450, 380, 250, 300, 330, 410, 430, 470, 220, 201, 199, 100};
+
+    for (int32_t intruderAltitude: intruderAltitudes) {
+
+        std::cout << trajectoryName(updateTrajectory(flightTrjacetory::Cruise,300, intruderAltitude)) << std::endl;
+    }
 }
