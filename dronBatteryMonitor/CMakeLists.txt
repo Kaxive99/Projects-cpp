@@ -4,4 +4,5 @@ project(dronBatteryMonitor)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(dronBatteryMonitor main.cpp
-        BatteryState.h)
+        BatteryState.h
+        CollisionRadar.h)
