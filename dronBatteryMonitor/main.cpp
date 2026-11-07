@@ -13,12 +13,12 @@ int main() {
     std::cout << "Poziom bateri: " << batteryLevel(state) << " Napięcie: " << voltage <<std::endl;
     }
 
-    isCollisionRisk(320,280);
-
+    flightTrjacetory state1 = flightTrjacetory::Cruise;
     int32_t intruderAltitudes[] = {500, 450, 380, 250, 300, 330, 410, 430, 470, 220, 201, 199, 100};
 
     for (int32_t intruderAltitude: intruderAltitudes) {
+        state1 = updateTrajectory(state1, 300, intruderAltitude);
+        std::cout << trajectoryName(state1) << " ";
 
-        std::cout << trajectoryName(updateTrajectory(flightTrjacetory::Cruise,300, intruderAltitude)) << std::endl;
     }
 }
