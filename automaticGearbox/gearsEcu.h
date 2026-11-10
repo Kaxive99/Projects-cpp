@@ -128,8 +128,8 @@ private:
     }
 };
 
-/*Najpierw czytamy parametry silnika czyli obroty i aktualna pozycje pedału gazu jeśli pedał gazu jest wciśnięty na ponad 75% to  zmieńamy bieg w trybie sport jesli ponizej zmieniamy bieg w trybue eco a jesli jest wcisniety wot to zmieniamy bieg w trybie  race
-
-Np: odczytujemy ze aktualne obroty wynoszą 2100 zostaje wciśnięty gaz na 80% czyli zaczynamy agresywnie zwiększać obroty załóżmy że beda zwiekszac sie o 300 rpm az dojdzie do limitera czyli 6500 i wydrukuje nam w konsoli boom boom boom i zmieni bieg na wyższy.
-
+/*
+ *
+ * Udoskonal zatrzymanie przy osiagnieciu 8 biegu zamiast wylaczenia zaplonu i zrob funkcje down shift oraz udoskonal program
+ *
 */
