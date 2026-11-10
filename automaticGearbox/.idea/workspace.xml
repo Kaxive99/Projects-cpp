@@ -28,9 +28,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c3ed26f2-2483-4fa1-89a4-c5c3b52ba170" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/gearsEcu.h" beforeDir="false" afterPath="$PROJECT_DIR$/gearsEcu.h" afterDir="false" />
-    </list>
+    <list default="true" id="c3ed26f2-2483-4fa1-89a4-c5c3b52ba170" name="Changes" comment="Inctructions for tmr" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -132,5 +130,10 @@
     <isAutomaticFoundErrors value="true" />
     <isAutomaticReloadCMake value="true" />
     <isAutomaticBootstrapAfterUpdate value="false" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add adaptive shift profiles and RPM simulation&#10;&#10;Use throttle input to select Eco, Sport, or Race shift settings, adjust RPM based on gear ratios during upshifts, and run a timed gearbox simulation from user-provided throttle and RPM values." />
+    <MESSAGE value="Inctructions for tmr" />
+    <option name="LAST_COMMIT_MESSAGE" value="Inctructions for tmr" />
   </component>
 </project>
