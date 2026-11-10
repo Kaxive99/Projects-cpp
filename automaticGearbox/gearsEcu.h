@@ -2,8 +2,8 @@
 #include <cstdint>
 
 
-enum class gearsState {neutral, firstGear, secondGear, thirdGear, fourthGear, fifthGear, sixthGear, seventhGear, eightGear};
-enum class gearboxMode {Race, Sport, Eco};
+enum class GearsState {neutral, firstGear, secondGear, thirdGear, fourthGear, fifthGear, sixthGear, seventhGear, eighthGear};
+enum class GearboxMode {Race, Sport, Eco};
 
 constexpr int wotUpShiftRpm = 6500;
 constexpr int sportUpShiftRpm = 4500;
@@ -16,17 +16,18 @@ constexpr int increasingRpmsInSport = 150;
 constexpr int increasingRpmsInEco = 60;
 
 
-class geraboxEcu {
+class GeraboxEcu {
 private:
     const uint8_t  pin_;
-    gearsState state_;
+    GearsState state_;
+    GearboxMode mode_;
     bool sportAcceleration = false;
     bool wotAcceleration = false;
     int rpm;
 
     public:
     //Lista inicjalizacyjna
-    explicit geraboxEcu(uint8_t p) : pin_(p), state_(gearsState::neutral) {}
+    explicit GeraboxEcu(uint8_t p) : pin_(p), state_(GearsState::neutral), mode_(GearboxMode::Eco), rpm(600) {}
 
 
     //Odczytuje nacisk na pedał gazu i ocenia czy zostało wykonane agresywne przyśpieszenie.
@@ -47,15 +48,27 @@ private:
     void increasingRpm() {
         if (wotAcceleration == true) {
             rpm += increasingRpmsInWot;
+            mode_ = GearboxMode::Race;
         } else if (sportAcceleration == true) {
             rpm += increasingRpmsInSport;
-        } else {rpm += increasingRpmsInEco;}
+            mode_ = GearboxMode::Sport;
+        } else {rpm += increasingRpmsInEco; mode_ = GearboxMode::Eco;}
     }
 
-    void getGearState(state_) {
+    // Wyświetla nazwe aktualnego biegu
+    const char* getGearState() {
         switch (state_) {
-            case 
+            case GearsState::neutral : return "Neutral";
+            case GearsState::firstGear : return "Gear 1";
+            case GearsState::secondGear : return "Gear 2";
+            case GearsState::thirdGear : return "Gear 3";
+            case GearsState::fourthGear : return "Gear 4";
+            case GearsState::fifthGear : return "Gear 5";
+            case GearsState::sixthGear : return "Gear 6";
+            case GearsState::seventhGear : return "Gear 7";
+            case GearsState::eighthGear : return "Gear 8";
         }
+        return "Unknown";
     }
 
     void upShift() {
