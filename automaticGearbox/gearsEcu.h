@@ -1,8 +1,8 @@
 #pragma once
 #include <cstdint>
+using namespace std;
 
 
-enum class GearsState {neutral, firstGear, secondGear, thirdGear, fourthGear, fifthGear, sixthGear, seventhGear, eighthGear};
 enum class GearboxMode {Race, Sport, Eco};
 
 constexpr int wotUpShiftRpm = 6500;
@@ -15,11 +15,18 @@ constexpr int increasingRpmsInWot = 300;
 constexpr int increasingRpmsInSport = 150;
 constexpr int increasingRpmsInEco = 60;
 
+struct ShiftProfile {
+    int rpmStep;
+    int upshiftRpm;
+    int downshiftRpm;
+};
+
 
 class GeraboxEcu {
 private:
     const uint8_t  pin_;
-    GearsState state_;
+    int currentGear;
+    int maxGear = 8;
     GearboxMode mode_;
     bool sportAcceleration = false;
     bool wotAcceleration = false;
@@ -27,16 +34,18 @@ private:
 
     public:
     //Lista inicjalizacyjna
-    explicit GeraboxEcu(uint8_t p) : pin_(p), state_(GearsState::neutral), mode_(GearboxMode::Eco), rpm(600) {}
+    explicit GeraboxEcu(uint8_t p) : pin_(p), mode_(GearboxMode::Eco), rpm(600), currentGear(0) {}
 
 
     //Odczytuje nacisk na pedał gazu i ocenia czy zostało wykonane agresywne przyśpieszenie.
     bool tpsSensor(uint8_t throttlePosition) {
         if (throttlePosition == 100) {
-            wotAcceleration = true;
-        } else if (throttlePosition <= 75) {
+            mode_ = GearboxMode::Race;
+            return wotAcceleration = true;
+        } else if (throttlePosition > 75) {
+            mode_ = GearboxMode::Sport;
             return sportAcceleration = true;
-        } else {return sportAcceleration = false;}
+        } else {mode_ = GearboxMode::Eco; return sportAcceleration = false;}
         return "TPS sensor fault - service required";
     }
 
@@ -48,31 +57,45 @@ private:
     void increasingRpm() {
         if (wotAcceleration == true) {
             rpm += increasingRpmsInWot;
-            mode_ = GearboxMode::Race;
         } else if (sportAcceleration == true) {
             rpm += increasingRpmsInSport;
-            mode_ = GearboxMode::Sport;
-        } else {rpm += increasingRpmsInEco; mode_ = GearboxMode::Eco;}
+        } else {rpm += increasingRpmsInEco;}
     }
 
     // Wyświetla nazwe aktualnego biegu
     const char* getGearState() {
-        switch (state_) {
-            case GearsState::neutral : return "Neutral";
-            case GearsState::firstGear : return "Gear 1";
-            case GearsState::secondGear : return "Gear 2";
-            case GearsState::thirdGear : return "Gear 3";
-            case GearsState::fourthGear : return "Gear 4";
-            case GearsState::fifthGear : return "Gear 5";
-            case GearsState::sixthGear : return "Gear 6";
-            case GearsState::seventhGear : return "Gear 7";
-            case GearsState::eighthGear : return "Gear 8";
+        switch (currentGear) {
+            case 0 : return "Neutral";
+            case 1 : return "Gear 1";
+            case 2 : return "Gear 2";
+            case 3 : return "Gear 3";
+            case 4 : return "Gear 4";
+            case 5 : return "Gear 5";
+            case 6 : return "Gear 6";
+            case 7 : return "Gear 7";
+            case 8 : return "Gear 8";
         }
         return "Unknown";
     }
 
+    ShiftProfile getShiftProfile() const {
+        switch (mode_) {
+            case GearboxMode::Eco : return {60, 2000, 1000};
+            case GearboxMode::Sport : return {150, 4500, 2200};
+            case GearboxMode::Race : return {300, 6500, 3000};
+        }
+    }
+    ShiftProfile profile = getShiftProfile();
+
+
+    //Zwiększa bieg i oblicza rpm na nowym biegu.
     void upShift() {
-       //Zwiększa bieg i oblicza rpm na nowym biegu.
+        if (currentGear == maxGear) {
+            cout << "[WARN] Max gear reached - rev limiter active (6500 RPM) \n";
+        } else {
+            cout << "[INFO] Upshift " << currentGear <<" -> " << currentGear++ <<" at " << profile.upshiftRpm << " RPM \n";
+            currentGear++;
+        }
     }
 };
 
